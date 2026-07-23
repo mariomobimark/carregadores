@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Gerador de etiquetas para carregadores da mobieduca.me"
+    />
+    <meta name="color-scheme" content="only light" />
+    <meta name="theme-color" content="#1f6fb2" />
+    <title>Etiquetas para Carregadores | mobieduca.me</title>
+    <link rel="icon" href="./logo.png" type="image/png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar__inner">
+        <a class="brand" href="./" aria-label="Página inicial">
+          <img src="./logo.png" alt="mobieduca.me" />
+        </a>
+        <div class="topbar__title">
+          <span class="eyebrow">Ferramenta interna</span>
+          <h1>Etiquetas para carregadores</h1>
+        </div>
+        <div class="privacy-pill" title="As informações não saem deste computador">
+          <span aria-hidden="true">●</span>
+          Dados somente neste navegador
+        </div>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <section class="intro">
+        <div>
+          <p class="section-kicker">Gerador de impressão</p>
+          <h2>Monte a folha, confira a etiqueta e imprima.</h2>
+          <p>
+            Cadastre os carregadores, ajuste as medidas e salve a impressão como
+            PDF. Na janela de impressão, use escala de 100% ou tamanho real.
+          </p>
+        </div>
+        <div class="intro__stats" aria-label="Resumo da configuração">
+          <div>
+            <strong id="capacityStat">36</strong>
+            <span>por página</span>
+          </div>
+          <div>
+            <strong id="totalStat">0</strong>
+            <span>na fila</span>
+          </div>
+          <div>
+            <strong id="pagesStat">0</strong>
+            <span>páginas</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="workspace-grid">
+        <section class="panel form-panel" aria-labelledby="formTitle">
+          <div class="panel__heading">
+            <div>
+              <span class="step">1</span>
+              <div>
+                <p class="section-kicker">Dados da etiqueta</p>
+                <h2 id="formTitle">Adicionar carregador</h2>
+              </div>
+            </div>
+            <button id="resetFormBtn" class="text-button" type="button">
+              Limpar campos
+            </button>
+          </div>
+
+          <form id="labelForm" novalidate>
+            <div class="field field--full">
+              <label for="school">Nome da escola <span>*</span></label>
+              <textarea
+                id="school"
+                rows="2"
+                maxlength="180"
+                placeholder="Ex.: Escola Municipal São José"
+                required
+              ></textarea>
+              <small>Você pode usar Enter para forçar uma quebra de linha.</small>
+            </div>
+
+            <div class="field field--full">
+              <label for="note">Observação</label>
+              <input
+                id="note"
+                type="text"
+                maxlength="60"
+                placeholder="Ex.: SALA 03"
+              />
+            </div>
+
+            <div class="field-grid">
+              <div class="field">
+                <label for="inputValue">Input <span>*</span></label>
+                <input
+                  id="inputValue"
+                  type="text"
+                  maxlength="70"
+                  value="100-240V~ 50/60Hz"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="outputValue">Output <span>*</span></label>
+                <input
+                  id="outputValue"
+                  type="text"
+                  maxlength="70"
+                  value="5V 3A"
+                  required
+                />
+              </div>
+              <div class="field field--quantity">
+                <label for="quantity">Quantidade <span>*</span></label>
+                <input id="quantity" type="number" min="1" max="999" value="1" required />
+              </div>
+            </div>
+
+            <details class="settings">
+              <summary>
+                <span>
+                  <strong>Configuração da folha</strong>
+                  <small>Medidas, margens e linhas de corte</small>
+                </span>
+                <span class="settings__chevron" aria-hidden="true">⌄</span>
+              </summary>
+              <div class="settings__body">
+                <div class="measure-grid">
+                  <div class="field">
+                    <label for="labelWidth">Largura (mm)</label>
+                    <input id="labelWidth" type="number" min="20" max="190" step="0.1" value="50" />
+                  </div>
+                  <div class="field">
+                    <label for="labelHeight">Altura (mm)</label>
+                    <input id="labelHeight" type="number" min="15" max="280" step="0.1" value="30" />
+                  </div>
+                  <div class="field">
+                    <label for="pageMargin">Margem A4 (mm)</label>
+                    <input id="pageMargin" type="number" min="0" max="40" step="0.1" value="3" />
+                  </div>
+                  <div class="field">
+                    <label for="gapX">Espaço horizontal (mm)</label>
+                    <input id="gapX" type="number" min="0" max="30" step="0.1" value="1" />
+                  </div>
+                  <div class="field">
+                    <label for="gapY">Espaço vertical (mm)</label>
+                    <input id="gapY" type="number" min="0" max="30" step="0.1" value="1" />
+                  </div>
+                </div>
+                <label class="check-row" for="cutLines">
+                  <input id="cutLines" type="checkbox" checked />
+                  <span>
+                    <strong>Mostrar linhas de corte</strong>
+                    <small>Adiciona pequenas marcas nos cantos das etiquetas.</small>
+                  </span>
+                </label>
+              </div>
+            </details>
+
+            <div id="formMessage" class="form-message" role="alert" aria-live="polite"></div>
+
+            <div class="form-actions">
+              <button id="submitBtn" class="button button--primary" type="submit">
+                <span aria-hidden="true">＋</span>
+                Adicionar à fila
+              </button>
+              <button id="cancelEditBtn" class="button button--ghost" type="button" hidden>
+                Cancelar edição
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="panel preview-panel" aria-labelledby="previewTitle">
+          <div class="panel__heading panel__heading--compact">
+            <div>
+              <span class="step">2</span>
+              <div>
+                <p class="section-kicker">Conferência</p>
+                <h2 id="previewTitle">Prévia da etiqueta</h2>
+              </div>
+            </div>
+            <span id="previewSize" class="size-badge">50 × 30 mm</span>
+          </div>
+          <div class="preview-stage">
+            <div id="previewLabel" class="charger-label charger-label--preview">
+              <img class="charger-label__logo" src="./logo.png" alt="mobieduca.me" />
+              <div id="previewSchool" class="charger-label__school fit-text">
+                NOME DA ESCOLA
+              </div>
+              <div id="previewNote" class="charger-label__note fit-text" hidden></div>
+              <div id="previewInput" class="charger-label__spec fit-text">
+                INPUT: 100-240V~ 50/60Hz
+              </div>
+              <div id="previewOutput" class="charger-label__spec fit-text">
+                OUTPUT: 5V 3A
+              </div>
+              <div class="charger-label__icons" aria-label="Símbolos do carregador">
+                <span title="Uso interno">⌂</span>
+                <span title="Dupla isolação">▣</span>
+                <span title="Descarte adequado" class="bin-symbol">♲</span>
+                <span title="Polaridade">− ◉ ＋</span>
+              </div>
+            </div>
+          </div>
+          <div class="preview-note">
+            <span aria-hidden="true">i</span>
+            <p>
+              A prévia é aproximada. A folha de impressão usa as medidas reais
+              informadas acima.
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      <section class="panel queue-panel" aria-labelledby="queueTitle">
+        <div class="panel__heading">
+          <div>
+            <span class="step">3</span>
+            <div>
+              <p class="section-kicker">Itens adicionados</p>
+              <h2 id="queueTitle">Fila de impressão</h2>
+            </div>
+          </div>
+          <button id="clearQueueBtn" class="text-button text-button--danger" type="button" disabled>
+            Limpar fila
+          </button>
+        </div>
+
+        <div id="emptyState" class="empty-state">
+          <div class="empty-state__icon" aria-hidden="true">▤</div>
+          <h3>A fila ainda está vazia</h3>
+          <p>Preencha os dados acima e adicione a primeira etiqueta.</p>
+        </div>
+
+        <div id="queueContent" hidden>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Escola</th>
+                  <th>Observação</th>
+                  <th>Input</th>
+                  <th>Output</th>
+                  <th class="number-cell">Qtd.</th>
+                  <th><span class="sr-only">Ações</span></th>
+                </tr>
+              </thead>
+              <tbody id="queueBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="print-bar">
+          <div>
+            <strong id="printSummary">Nenhuma etiqueta adicionada</strong>
+            <span id="pageSummary">Adicione itens para preparar a folha A4.</span>
+          </div>
+          <button id="printBtn" class="button button--print" type="button" disabled>
+            <span aria-hidden="true">▣</span>
+            Imprimir / salvar PDF
+          </button>
+        </div>
+      </section>
+
+      <section class="print-help">
+        <div aria-hidden="true">✓</div>
+        <p>
+          <strong>Para manter o tamanho correto:</strong> na janela de impressão,
+          escolha papel A4, margens “nenhuma” e escala 100% ou “tamanho real”.
+          Desative “gráficos de plano de fundo” e confira se a miniatura está
+          branca antes de confirmar. Se aparecer preta, cancele a impressão.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <img src="./logo.png" alt="mobieduca.me" />
+      <p>Gerador de etiquetas para carregadores</p>
+    </footer>
+
+    <div id="printArea" aria-hidden="true"></div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
