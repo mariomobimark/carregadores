@@ -391,6 +391,16 @@ button:disabled {
   cursor: pointer;
 }
 
+.settings__hint {
+  margin: 4px 0 8px;
+  padding: 9px 11px;
+  border-radius: 9px;
+  background: var(--blue-soft);
+  color: #526b7d;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
 .check-row input {
   width: 17px;
   height: 17px;
@@ -855,7 +865,7 @@ footer img {
   width: 210mm;
   height: 297mm;
   align-content: start;
-  justify-content: start;
+  justify-content: center;
   break-after: page;
   page-break-after: always;
   background: white;

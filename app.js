@@ -2,12 +2,14 @@
   "use strict";
 
   const STORAGE_KEY = "mobieduca-carregadores-v1";
+  const SETTINGS_VERSION = 2;
+  const SAFE_MARGIN_MM = 5;
   const A4 = { width: 210, height: 297 };
   const defaults = {
     width: 50,
     height: 30,
-    margin: 3,
-    gapX: 1,
+    margin: SAFE_MARGIN_MM,
+    gapX: 0,
     gapY: 1,
     cutLines: true,
   };
@@ -113,7 +115,11 @@
     state.settings = readSettings();
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ items: state.items, settings: state.settings }),
+      JSON.stringify({
+        version: SETTINGS_VERSION,
+        items: state.items,
+        settings: state.settings,
+      }),
     );
   }
 
@@ -128,13 +134,29 @@
           Number.isInteger(item.quantity) &&
           item.quantity > 0,
       );
-      state.settings = { ...defaults, ...(saved.settings || {}) };
+      const savedSettings = saved.settings || {};
+      const usedOldDefaultLayout =
+        toNumber(savedSettings.width, defaults.width) === 50 &&
+        toNumber(savedSettings.height, defaults.height) === 30 &&
+        toNumber(savedSettings.margin, 3) === 3 &&
+        toNumber(savedSettings.gapX, 1) === 1;
+
+      state.settings = { ...defaults, ...savedSettings };
+      state.settings.margin = Math.max(
+        SAFE_MARGIN_MM,
+        toNumber(state.settings.margin, defaults.margin),
+      );
+      if ((saved.version || 1) < SETTINGS_VERSION && usedOldDefaultLayout) {
+        state.settings.gapX = 0;
+      }
+
       elements.width.value = state.settings.width;
       elements.height.value = state.settings.height;
       elements.margin.value = state.settings.margin;
       elements.gapX.value = state.settings.gapX;
       elements.gapY.value = state.settings.gapY;
       elements.cutLines.checked = state.settings.cutLines;
+      saveState();
     } catch {
       localStorage.removeItem(STORAGE_KEY);
     }
@@ -179,8 +201,11 @@
     if (settings.width <= 0 || settings.height <= 0) {
       return "Largura e altura precisam ser maiores que zero.";
     }
-    if (settings.margin < 0 || settings.gapX < 0 || settings.gapY < 0) {
-      return "Margem e espaçamentos não podem ser negativos.";
+    if (settings.margin < SAFE_MARGIN_MM) {
+      return "Use pelo menos 5 mm de margem para evitar cortes na impressão.";
+    }
+    if (settings.gapX < 0 || settings.gapY < 0) {
+      return "Os espaçamentos não podem ser negativos.";
     }
     if (capacity(settings).total === 0) {
       return "Com essas medidas, nenhuma etiqueta cabe em uma folha A4.";
