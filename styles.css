@@ -862,8 +862,6 @@ footer img {
 
 .print-page {
   display: grid;
-  width: 210mm;
-  height: 297mm;
   align-content: start;
   justify-content: center;
   break-after: page;
@@ -1078,7 +1076,7 @@ footer img {
 
 @page {
   size: A4 portrait;
-  margin: 0;
+  margin: 5mm;
 }
 
 @media print {
@@ -1088,8 +1086,8 @@ footer img {
 
   html,
   body {
-    width: 210mm;
-    min-width: 210mm;
+    width: auto;
+    min-width: 0;
     margin: 0;
     padding: 0;
     background: #fff !important;
@@ -1109,8 +1107,8 @@ footer img {
   #printArea {
     position: static;
     display: block;
-    width: 210mm;
-    min-height: 297mm;
+    width: auto;
+    min-height: 0;
     background: #fff !important;
     background-color: #fff !important;
     background-image: none !important;

@@ -398,6 +398,8 @@
     }
 
     const pageCapacity = capacity(settings);
+    const printableWidth = A4.width - settings.margin * 2;
+    const printableHeight = A4.height - settings.margin * 2;
     const expanded = state.items.flatMap((item) =>
       Array.from({ length: item.quantity }, () => item),
     );
@@ -412,7 +414,8 @@
           <section
             class="print-page"
             style="
-              padding: ${settings.margin}mm;
+              width: ${printableWidth}mm;
+              height: ${printableHeight}mm;
               grid-template-columns: repeat(${pageCapacity.columns}, ${settings.width}mm);
               grid-auto-rows: ${settings.height}mm;
               column-gap: ${settings.gapX}mm;
@@ -426,6 +429,16 @@
       )
       .join("");
     return true;
+  }
+
+  function setPrintPageMargin(settings) {
+    let style = document.getElementById("dynamicPrintPageStyle");
+    if (!style) {
+      style = document.createElement("style");
+      style.id = "dynamicPrintPageStyle";
+      document.head.appendChild(style);
+    }
+    style.textContent = `@page { size: A4 portrait; margin: ${settings.margin}mm; }`;
   }
 
   function fitPrintText(root = elements.printArea) {
@@ -459,6 +472,7 @@
 
   async function printInSafeFrame() {
     document.getElementById("printFrame")?.remove();
+    const settings = readSettings();
 
     const frame = document.createElement("iframe");
     frame.id = "printFrame";
@@ -483,6 +497,10 @@
           <base href="${escapeHtml(document.baseURI)}">
           <link rel="stylesheet" href="./styles.css">
           <style>
+            @page {
+              size: A4 portrait;
+              margin: ${settings.margin}mm;
+            }
             :root, html, body {
               color-scheme: only light !important;
               background: #fff !important;
@@ -628,6 +646,7 @@
       await printInSafeFrame();
     } catch {
       fitPrintText();
+      setPrintPageMargin(readSettings());
       document.documentElement.style.colorScheme = "only light";
       document.body.style.background = "#fff";
       window.print();
@@ -638,6 +657,7 @@
 
   window.addEventListener("afterprint", () => {
     elements.printArea.innerHTML = "";
+    document.getElementById("dynamicPrintPageStyle")?.remove();
     document.documentElement.style.removeProperty("color-scheme");
     document.body.style.removeProperty("background");
   });
